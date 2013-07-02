@@ -116,7 +116,7 @@ class MWS(object):
     ACCOUNT_TYPE = "SellerId"
 
     def __init__(self, access_key, secret_key, account_id,
-                 domain='https://mws.amazonservices.com', uri="", version=""):
+                 domain='https://mws.amazonservices.in', uri="", version=""):
         self.access_key = access_key
         self.secret_key = secret_key
         self.account_id = account_id
@@ -152,7 +152,9 @@ class MWS(object):
             # My answer is, here i have to get the url parsed string of params in order to sign it, so
             # if i pass the params dict as params to request, request will repeat that step because it will need
             # to convert the dict to a url parsed string, so why do it twice if i can just pass the full url :).
-            response = request(method, url, data=kwargs.get('body', ''), headers=headers)
+            # set verify=False mws.amazonservices.in throws SSL error, this is hack to suppress the error
+            # until the SSL is fixed at amazonservices.in
+            response = request(method, url, data=kwargs.get('body', ''), headers=headers, verify=False)
             response.raise_for_status()
             # When retrieving data from the response object,
             # be aware that response.content returns the content in bytes while response.text calls
@@ -361,7 +363,7 @@ class Orders(MWS):
 
     URI = "/Orders/2011-01-01"
     VERSION = "2011-01-01"
-    NS = '{https://mws.amazonservices.com/Orders/2011-01-01}'
+    NS = '{https://mws.amazonservices.in/Orders/2011-01-01}'
 
     def list_orders(self, marketplaceids, created_after=None, created_before=None, lastupdatedafter=None,
                     lastupdatedbefore=None, orderstatus=(), fulfillment_channels=(),
@@ -405,7 +407,7 @@ class Products(MWS):
 
     URI = '/Products/2011-10-01'
     VERSION = '2011-10-01'
-    NS = '{http://mws.amazonservices.com/schema/Products/2011-10-01}'
+    NS = '{http://mws.amazonservices.in/schema/Products/2011-10-01}'
 
     def list_matching_products(self, marketplaceid, query, contextid=None):
         """ Returns a list of products and their attributes, ordered by
@@ -502,7 +504,7 @@ class Sellers(MWS):
 
     URI = '/Sellers/2011-07-01'
     VERSION = '2011-07-01'
-    NS = '{http://mws.amazonservices.com/schema/Sellers/2011-07-01}'
+    NS = '{http://mws.amazonservices.in/schema/Sellers/2011-07-01}'
 
     def list_marketplace_participations(self):
         """
@@ -538,7 +540,7 @@ class Inventory(MWS):
 
     URI = '/FulfillmentInventory/2010-10-01'
     VERSION = '2010-10-01'
-    NS = "{http://mws.amazonaws.com/FulfillmentInventory/2010-10-01}"
+    NS = "{http://mws.amazonaws.in/FulfillmentInventory/2010-10-01}"
 
     def list_inventory_supply(self, skus=(), datetime=None, response_group='Basic'):
         """ Returns information on available inventory """
@@ -567,7 +569,7 @@ class Recommendations(MWS):
 
     URI = '/Recommendations/2013-04-01'
     VERSION = '2013-04-01'
-    NS = "{https://mws.amazonservices.com/Recommendations/2013-04-01}"
+    NS = "{https://mws.amazonservices.in/Recommendations/2013-04-01}"
 
     def get_last_updated_time_for_recommendations(self, marketplaceid):
         """
